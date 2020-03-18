@@ -19,3 +19,5 @@ export const postCode = params =>
     method: 'get',
     params,
   });
+
+export default (url: string) => `${base}${url}`;

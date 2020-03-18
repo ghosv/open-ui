@@ -9,6 +9,7 @@ import Icon from './components/pc/Icon';
 import Window from './components/pc/Window';
 
 import { gql } from 'apollo-boost';
+import genURL from '@/services/core';
 
 const APP_LIST = gql`
   {
@@ -73,7 +74,9 @@ function Desktop({ token }) {
   const [wins, open, close] = useWindowStack([], token);
   const winList = wins.map((app, index) => {
     // TODO:
-    const url = `/api/authorize?id=${app.id}&token=${token}&redirect=${app.URL}`;
+    const url = genURL(
+      `/authorize?id=${app.id}&token=${token}&redirect=${app.URL}`,
+    );
 
     return (
       <Window
