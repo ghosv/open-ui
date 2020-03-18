@@ -1,0 +1,33 @@
+.icon {
+  margin: 3px 10px;
+  width: 64px;
+  height: 100px;
+  display: inline-block;
+
+  cursor: pointer;
+  color: #fff;
+
+  &.active {
+    margin: 2px 9px;
+    border: rgb(0, 140, 255) solid 1px;
+    background-color: rgba(0, 140, 255, 0.5);
+  }
+
+  .img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+  }
+
+  .txt {
+    height: 36px;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: center;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+}
