@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'umi';
-import { useQuery } from '@/hooks';
+import { useQuery } from '@apollo/react-hooks';
 import styles from './_pc.less';
 
 import { message } from 'antd';

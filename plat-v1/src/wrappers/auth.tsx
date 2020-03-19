@@ -3,19 +3,63 @@ import React from 'react';
 import { connect, useHistory, useLocation, getDvaApp } from 'umi';
 
 import { ApolloProvider } from '@apollo/react-hooks';
-import ApolloClient from 'apollo-boost';
+// import ApolloClient from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+import { ApolloLink, Observable, from } from 'apollo-link';
+import { onError } from 'apollo-link-error';
 
-const client = new ApolloClient({
-  uri: '/graphql',
-  request: operation => {
-    const store = getDvaApp()._store;
-    const { token } = store.getState();
-    operation.setContext({
-      headers: {
-        authorization: token ? `Bearer ${token}` : '',
-      },
-    });
-  },
+const httpLink = new HttpLink({ uri: '/graphql' });
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+  const store = getDvaApp()._store;
+  const { token } = store.getState();
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }));
+
+  return forward(operation);
+})
+
+//const refreshMiddleware = new ApolloLink((operation, forward) =>
+//  new Observable(observer => {
+//    const handle = forward(operation).subscribe({
+//      next(result) {
+//        const { headers } = operation.getContext().response
+//        console.log(headers, result)
+//        // TODO: Set-Token 无法实现，在新架构上使用 Client 主动刷新！
+//        observer.next(result);
+//      },
+//      error: observer.error.bind(observer),
+//      completeo: observer.complete.bind(observer)
+//    });
+//    return () => {
+//      if (handle) handle.unsubscribe();
+//    };
+//  })
+//)
+
+const logoutLink = onError(res => {
+  const store = getDvaApp()._store;
+  const { /* TODO: graphQLErrors, */ networkError } = res
+  if (networkError.statusCode === 401) {
+    store.dispatch({ type: 'token/clean' });
+  }
+})
+
+const cache = new InMemoryCache();
+const client = new ApolloClient<NormalizedCacheObject>({
+  cache,
+  link: from([
+    authMiddleware,
+    // refreshMiddleware,
+    logoutLink,
+    httpLink,
+  ]),
 });
 
 const Auth = ({ token, children }) => {

@@ -1,8 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useRequest } from 'umi';
-
-import useQuery from './graphql';
-export { useQuery };
 
 export function useCountDown(interval = 1000): [number, (t: number) => void] {
   const [time, setTime] = useState(0);
@@ -20,9 +16,6 @@ export function useCountDown(interval = 1000): [number, (t: number) => void] {
   }, [time]);
   return [time, active];
 }
-
-/*
- */
 
 import { postCode } from '@/services/core';
 export function usePostCode(get: () => string, type: string = 'sms') {
