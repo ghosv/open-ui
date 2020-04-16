@@ -1,0 +1,38 @@
+.container {
+  .sider {
+    .logo {
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 16px;
+
+      line-height: 32px;
+      text-align: center;
+    }
+  }
+
+  .header {
+    padding: 0;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+
+    .trigger {
+      font-size: 18px;
+      line-height: 64px;
+      padding: 0 24px;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #1890ff;
+      }
+    }
+  }
+
+  .content {
+    // background: #fff;
+    margin: 64px 16px 24px 16px;
+    padding: 24px;
+    min-height: 600px;
+  }
+}

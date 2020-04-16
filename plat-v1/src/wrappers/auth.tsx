@@ -10,7 +10,8 @@ import { HttpLink } from 'apollo-link-http';
 import { ApolloLink, Observable, from } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 
-const httpLink = new HttpLink({ uri: '/graphql' });
+//const httpLink = new HttpLink({ uri: '/graphql' });
+const httpLink = new HttpLink({ uri: `http://${window.document.location.hostname}:4002/graphql` });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const store = getDvaApp()._store;
@@ -18,12 +19,12 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers = {} }) => ({
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    }
+      authorization: token ? `Bearer ${token}` : '',
+    },
   }));
 
   return forward(operation);
-})
+});
 
 //const refreshMiddleware = new ApolloLink((operation, forward) =>
 //  new Observable(observer => {
@@ -43,13 +44,27 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 //  })
 //)
 
+import { notification } from 'antd';
 const logoutLink = onError(res => {
   const store = getDvaApp()._store;
-  const { /* TODO: graphQLErrors, */ networkError } = res
+  const { graphQLErrors, networkError } = res;
+  if (graphQLErrors) {
+    for (let i in graphQLErrors) {
+      if (graphQLErrors[i].message === "401") {
+        store.dispatch({ type: 'token/clean' });
+        return
+      }
+    }
+    notification.error({
+      message: 'Request Error',
+      description: graphQLErrors[0].message,
+    });
+    return;
+  }
   if (networkError.statusCode === 401) {
     store.dispatch({ type: 'token/clean' });
   }
-})
+});
 
 const cache = new InMemoryCache();
 const client = new ApolloClient<NormalizedCacheObject>({
@@ -60,6 +75,8 @@ const client = new ApolloClient<NormalizedCacheObject>({
     logoutLink,
     httpLink,
   ]),
+
+  connectToDevTools: true,
 });
 
 const Auth = ({ token, children }) => {

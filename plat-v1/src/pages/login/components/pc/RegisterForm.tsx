@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect, useHistory, useLocation, useRequest } from 'umi';
 import { usePostCode } from '@/hooks';
 
-import { Form, Input, Button, Checkbox, Select, Modal, Row, Col } from 'antd';
+import { Form, Input, Button, Checkbox, Select, Modal } from 'antd';
 
 import { register, postCode } from '@/services/core';
 

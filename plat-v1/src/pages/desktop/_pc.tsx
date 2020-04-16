@@ -74,9 +74,10 @@ function Desktop({ token }) {
   const [wins, open, close] = useWindowStack([], token);
   const winList = wins.map((app, index) => {
     // TODO:
-    const url = genURL(
-      `/authorize?id=${app.id}&token=${token}&redirect=${app.URL}`,
-    );
+    //const url = genURL(
+    //  `/authorize?id=${app.id}&token=${token}&redirect=${app.URL}`,
+    //);
+    const url = `#${app.URL}`;
 
     return (
       <Window
